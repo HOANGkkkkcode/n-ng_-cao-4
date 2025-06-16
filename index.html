@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mua / Bán POL - BRIL-S</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #121212;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+    .container {
+      max-width: 550px;
+      margin: auto;
+      background: #1e1e1e;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+    input, select, button {
+      padding: 10px;
+      margin: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      width: 80%;
+    }
+    button {
+      background-color: #2196F3;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0b7dda;
+    }
+    .copy-box {
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #2c2c2c;
+      border-radius: 8px;
+      font-size: 16px;
+      user-select: all;
+    }
+    .note {
+      font-size: 14px;
+      color: #ccc;
+    }
+    .section {
+      margin-top: 40px;
+      border-top: 1px solid #444;
+      padding-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🪙 Mua POL</h2>
+    <p class="note">2 POL = 20.000 VNĐ<br>Chuyển khoản sau khi xác nhận</p>
+    <input type="text" id="usernameBuy" placeholder="Tên của bạn">
+    <input type="number" id="amountBuy" placeholder="Số lượng POL (tối thiểu 2)" oninput="checkBuyValid()">
+    <button id="buyBtn" onclick="buyPOL()" disabled>Mua POL</button>
+
+    <div class="section">
+      <h2>💸 Bán BRIL-S</h2>
+      <input type="number" id="brilAmount" placeholder="Số lượng BRIL-S" oninput="checkSellValid()">
+      <input type="text" id="accountName" placeholder="Tên tài khoản ngân hàng" oninput="checkSellValid()">
+      <input type="text" id="accountNumber" placeholder="Số tài khoản ngân hàng" oninput="checkSellValid()">
+      <select id="bankName" onchange="checkSellValid()">
+        <option value="">-- Chọn ngân hàng --</option>
+        <option value="Vietcombank">Vietcombank</option>
+        <option value="VietinBank">VietinBank</option>
+        <option value="BIDV">BIDV</option>
+        <option value="MB Bank">MB Bank</option>
+        <option value="TPBank">TPBank</option>
+        <option value="Agribank">Agribank</option>
+        <option value="ACB">ACB</option>
+      </select>
+
+      <h4>🔁 Chuyển BRIL-S về ví:</h4>
+      <div class="copy-box" id="walletAddress" onclick="copyWallet()">0xABCD1234EF567890000000000000000000000000</div>
+      <div class="note">Nhấn để sao chép ví</div>
+
+      <button id="sellBtn" onclick="sellBRIL()" disabled>Bán BRIL-S</button>
+    </div>
+  </div>
+
+  <script>
+    function checkBuyValid() {
+      const name = document.getElementById("usernameBuy").value.trim();
+      const amount = parseInt(document.getElementById("amountBuy").value);
+      document.getElementById("buyBtn").disabled = !name || isNaN(amount) || amount < 2;
+    }
+
+    function buyPOL() {
+      const name = document.getElementById("usernameBuy").value.trim();
+      const amount = document.getElementById("amountBuy").value;
+      const message = 
+        `🪙 MUA POL\n` +
+        `👤 Tên: ${name}\n` +
+        `💰 Số lượng muốn mua: ${amount} POL\n` +
+        `💵 Tương đương: ${amount * 10000} VNĐ`;
+
+      navigator.clipboard.writeText(message).then(() => {
+        alert("Đã sao chép nội dung mua POL. Gửi riêng cho người bán trên Zalo.");
+        window.open("https://zalo.me/0375412790", "_blank");
+      });
+    }
+
+    function checkSellValid() {
+      const amount = parseInt(document.getElementById("brilAmount").value);
+      const name = document.getElementById("accountName").value.trim();
+      const number = document.getElementById("accountNumber").value.trim();
+      const bank = document.getElementById("bankName").value;
+      document.getElementById("sellBtn").disabled = isNaN(amount) || amount < 1 || !name || !number || !bank;
+    }
+
+    function sellBRIL() {
+      const amount = document.getElementById("brilAmount").value;
+      const name = document.getElementById("accountName").value;
+      const number = document.getElementById("accountNumber").value;
+      const bank = document.getElementById("bankName").value;
+      const wallet = document.getElementById("walletAddress").innerText;
+
+      const message = 
+        `💸 BÁN BRIL-S\n` +
+        `💰 Số lượng: ${amount} BRIL-S\n` +
+        `👤 Chủ TK: ${name}\n` +
+        `🏦 Ngân hàng: ${bank}\n` +
+        `🔢 Số TK: ${number}\n` +
+        `📥 Ví đã chuyển BRIL-S: ${wallet}`;
+
+      navigator.clipboard.writeText(message).then(() => {
+        alert("Đã sao chép nội dung bán BRIL-S. Gửi riêng cho người bán trên Zalo.");
+        window.open("https://zalo.me/0375412790", "_blank");
+      });
+    }
+
+    function copyWallet() {
+      const wallet = document.getElementById("walletAddress").innerText;
+      navigator.clipboard.writeText(wallet).then(() => {
+        alert("Đã sao chép địa chỉ ví!");
+      });
+    }
+  </script>
+</body>
+</html>
